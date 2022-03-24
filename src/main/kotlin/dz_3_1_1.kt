@@ -1,5 +1,5 @@
 fun main() {
-    print("Hello")
+    print("Hi")
 }
 
 
