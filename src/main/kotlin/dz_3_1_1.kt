@@ -9,10 +9,6 @@ object WallService {
     private var comments = emptyArray<Post.Comment>()
 
     fun createComment(comment: Post.Comment) {
-        if (comment.attachments == null && comment.message == null) {
-            println("attachments не добавлен, поэтому message не может быть пустым")
-            return
-        }
         var b: Boolean = false
         for (p in posts) {
             if (comment.postId == p.id) {
@@ -22,6 +18,10 @@ object WallService {
         }
         if (b == false) {
             throw PostNotFoundException("Пост не существует")
+        }
+        if (comment.attachments == null && comment.message == null) {
+            println("attachments не добавлен, поэтому message не может быть пустым")
+            return
         }
         if (!comments.isEmpty()) {
             for (c in comments) {
