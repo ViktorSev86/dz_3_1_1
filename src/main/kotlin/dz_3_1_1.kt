@@ -6,10 +6,43 @@ fun main() {
 object WallService {
     private var posts = emptyArray<Post>()
 
+    private var comments = emptyArray<Post.Comment>()
+
+    fun createComment(comment: Post.Comment) {
+        if (comment.attachments == null && comment.message == null) {
+            println("attachments не добавлен, поэтому message не может быть пустым")
+            return
+        }
+        var b: Boolean = false
+        for (p in posts) {
+            if (comment.postId == p.id) {
+                b = true
+                break
+            }
+        }
+        if (b == false) {
+            throw PostNotFoundException("Пост не существует")
+        }
+        if (!comments.isEmpty()) {
+            for (c in comments) {
+                if (comment.guid == c.guid) {
+                    println("Комментарий уже существует")
+                    return
+                }
+            }
+            val oldGuid = comments.last().guid
+            val commentCopy = comment.copy(guid = oldGuid + 1)
+            comments += commentCopy
+        } else {
+            comments += comment.copy(guid = 1)
+        }
+
+    }
+
     fun add(post: Post): Post {
         if (!posts.isEmpty()) {
             val oldId = posts.last().id
-            val postCopy = post.copy(id = oldId + 1);
+            val postCopy = post.copy(id = oldId + 1)
             posts += postCopy
         } else {
             posts += post.copy(1)
@@ -30,6 +63,7 @@ object WallService {
     }
 }
 
+class PostNotFoundException(message: String) : RuntimeException(message)
 
 data class Post(
     val id: Int = 0,
@@ -65,6 +99,17 @@ data class Post(
 
 
 ) {
+    data class Comment(
+        val ownerId: Int,
+        val postId: Int,
+        val fromGroup: Int = 0,
+        val message: String?,
+        val replyToComment: Int,
+        val attachments: Array<Attachment>?,
+        val sticker_id: UInt,
+        val guid: Int = 0
+    )
+
     data class Comments(
         val count: Int,
         val canPost: Boolean,
