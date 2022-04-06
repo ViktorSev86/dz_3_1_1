@@ -19,24 +19,13 @@ object WallService {
         if (b == false) {
             throw PostNotFoundException("Пост не существует")
         }
-        if (comment.attachments == null && comment.message == null) {
-            println("attachments не добавлен, поэтому message не может быть пустым")
-            return
-        }
         if (!comments.isEmpty()) {
-            for (c in comments) {
-                if (comment.guid == c.guid) {
-                    println("Комментарий уже существует")
-                    return
-                }
-            }
             val oldGuid = comments.last().guid
             val commentCopy = comment.copy(guid = oldGuid + 1)
             comments += commentCopy
         } else {
             comments += comment.copy(guid = 1)
         }
-
     }
 
     fun add(post: Post): Post {
